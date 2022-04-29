@@ -1,35 +1,63 @@
 import * as React from "react";
 import type { GetStaticProps, NextPage } from "next";
-import useSWR, { Fetcher, SWRConfig } from "swr";
 
 interface Props {
-  num: number;
+  char: {
+    name: string;
+    height: string;
+    mass: string;
+    hair_color: string;
+    skin_color: string;
+    eye_color: string;
+    birth_year: string;
+    gender: string;
+    homeworld: string;
+    films: string[];
+    species: string[];
+    vehicles: any[];
+    starships: any[];
+    created: Date;
+    edited: Date;
+    url: string;
+  };
 }
 
-const fetcher = (...args: [any]) => fetch(...args).then((res) => res.json());
-
-const About: NextPage<Props> = ({ num }) => {
-  // const { data, error } = useSWR("api/random", fetcher, {
-  //   revalidateOnFocus: false,
-  // });
-
-  // if (error) return <div>failed to load</div>;
-  // if (!data) return <div>loading...</div>;
-
-  // render data
-  return <>{num}</>;
+const About: NextPage<Props> = ({ char }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#ff5151",
+      }}
+    >
+      <div
+        style={{ width: "auto", backgroundColor: "#3a6e8a", padding: "10px" }}
+      >
+        <p
+          style={{ fontFamily: "sans-serif", color: "#fff", fontSize: "20px" }}
+        >
+          {char?.name?.[0]?.toUpperCase() + char?.name?.slice(1)}
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export const getStaticProps: GetStaticProps = async () => {
-  const num = await fetch("http://localhost:3000/api/random") // does not work when building locally because dev server is not running
+  const randNum = Math.floor(Math.random() * 82);
+  const char = await fetch(`https://swapi.dev/api/people/${randNum}`) // does not work when building locally because dev server is not running
     .then((res) => res.json())
-    .then((res) => res.randNum);
+    .then((res) => res);
 
   return {
     props: {
-      num,
+      char,
     },
-    revalidate: 5,
+    // revalidate: 10,
   };
 };
 
